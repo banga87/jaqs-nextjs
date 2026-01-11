@@ -10,6 +10,7 @@ export interface Plan {
   name: string;
   content: string;
   phaseCount: number;
+  workingDirectory: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -67,6 +68,9 @@ export const createPlanSchema = z.object({
   content: z
     .string()
     .min(1, 'Plan content is required'),
+  workingDirectory: z
+    .string()
+    .optional(),
 });
 
 export type CreatePlanInput = z.infer<typeof createPlanSchema>;
@@ -80,6 +84,9 @@ export const updatePlanSchema = z.object({
   content: z
     .string()
     .min(1, 'Plan content is required')
+    .optional(),
+  workingDirectory: z
+    .string()
     .optional(),
 });
 

@@ -38,21 +38,24 @@ function EditPlanForm({ plan, id }: EditPlanFormProps) {
 
   const [name, setName] = useState(plan.name);
   const [content, setContent] = useState(plan.content);
-  const [errors, setErrors] = useState<{ name?: string; content?: string }>({});
+  const [workingDirectory, setWorkingDirectory] = useState(plan.workingDirectory || "");
+  const [errors, setErrors] = useState<{ name?: string; content?: string; workingDirectory?: string }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
 
     // Validate using Zod schema
-    const result = createPlanSchema.safeParse({ name, content });
+    const result = createPlanSchema.safeParse({ name, content, workingDirectory: workingDirectory || undefined });
     if (!result.success) {
-      const fieldErrors: { name?: string; content?: string } = {};
+      const fieldErrors: { name?: string; content?: string; workingDirectory?: string } = {};
       for (const issue of result.error.issues) {
         if (issue.path[0] === "name") {
           fieldErrors.name = issue.message;
         } else if (issue.path[0] === "content") {
           fieldErrors.content = issue.message;
+        } else if (issue.path[0] === "workingDirectory") {
+          fieldErrors.workingDirectory = issue.message;
         }
       }
       setErrors(fieldErrors);
@@ -60,7 +63,7 @@ function EditPlanForm({ plan, id }: EditPlanFormProps) {
     }
 
     updatePlan.mutate(
-      { id, data: { name, content } },
+      { id, data: { name, content, workingDirectory: workingDirectory || undefined } },
       {
         onSuccess: () => {
           router.push(`/plans/${id}`);
@@ -106,6 +109,24 @@ function EditPlanForm({ plan, id }: EditPlanFormProps) {
               />
               {errors.name && (
                 <p className="text-sm text-destructive">{errors.name}</p>
+              )}
+            </div>
+
+            {/* Working Directory */}
+            <div className="space-y-2">
+              <Label htmlFor="workingDirectory">Working Directory (Optional)</Label>
+              <Input
+                id="workingDirectory"
+                placeholder="C:\Code\my-project or /home/user/my-project"
+                value={workingDirectory}
+                onChange={(e) => setWorkingDirectory(e.target.value)}
+                aria-invalid={!!errors.workingDirectory}
+              />
+              <p className="text-sm text-muted-foreground">
+                Absolute path where Claude Code sessions will run. Leave empty to use server&apos;s current directory.
+              </p>
+              {errors.workingDirectory && (
+                <p className="text-sm text-destructive">{errors.workingDirectory}</p>
               )}
             </div>
 

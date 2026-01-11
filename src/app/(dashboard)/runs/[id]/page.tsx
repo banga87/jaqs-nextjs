@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { useRun, useCancelRun } from "@/hooks/use-runs";
-import { useRunSubscription } from "@/hooks/use-run-subscription";
 import { RunProgress, PhaseList } from "@/components/run";
 import type { RunStatus } from "@/types";
 
@@ -59,9 +58,6 @@ export default function RunPage({ params }: RunPageProps) {
   const { id } = use(params);
   const { data: run, isLoading, error } = useRun(id);
   const cancelRun = useCancelRun();
-
-  // Subscribe to Supabase Realtime for instant updates
-  useRunSubscription(id);
 
   const handleCancel = () => {
     cancelRun.mutate(id);
