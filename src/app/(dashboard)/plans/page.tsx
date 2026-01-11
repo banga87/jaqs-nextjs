@@ -148,7 +148,14 @@ export default function PlansPage() {
           {plans.map((plan: Plan) => (
             <Card key={plan.id}>
               <CardHeader>
-                <CardTitle>{plan.name}</CardTitle>
+                <CardTitle>
+                  <Link
+                    href={`/plans/${plan.id}`}
+                    className="hover:underline"
+                  >
+                    {plan.name}
+                  </Link>
+                </CardTitle>
                 <CardDescription>
                   Created {format(new Date(plan.createdAt), "MMM d, yyyy")}
                 </CardDescription>

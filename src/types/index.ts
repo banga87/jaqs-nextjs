@@ -23,7 +23,7 @@ export interface ParsedPhase {
 }
 
 export interface PlanWithPhases extends Plan {
-  parsedPhases: ParsedPhase[];
+  phases: ParsedPhase[];
 }
 
 // Run type
@@ -70,6 +70,20 @@ export const createPlanSchema = z.object({
 });
 
 export type CreatePlanInput = z.infer<typeof createPlanSchema>;
+
+export const updatePlanSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Plan name is required')
+    .max(255, 'Plan name must be 255 characters or less')
+    .optional(),
+  content: z
+    .string()
+    .min(1, 'Plan content is required')
+    .optional(),
+});
+
+export type UpdatePlanInput = z.infer<typeof updatePlanSchema>;
 
 export const createRunSchema = z.object({
   planId: z
